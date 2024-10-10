@@ -200,48 +200,48 @@ static VkFormat SDLToVK_TextureFormat[] = {
     VK_FORMAT_D32_SFLOAT,                  // D32_FLOAT
     VK_FORMAT_D24_UNORM_S8_UINT,           // D24_UNORM_S8_UINT
     VK_FORMAT_D32_SFLOAT_S8_UINT,          // D32_FLOAT_S8_UINT
-    VK_FORMAT_ASTC_5x4_UNORM_BLOCK,        // SDL_GPU_TEXTUREFORMAT_ASTC_4x4_UNORM
-    VK_FORMAT_ASTC_4x4_UNORM_BLOCK,        // SDL_GPU_TEXTUREFORMAT_ASTC_5x4_UNORM
-    VK_FORMAT_ASTC_5x5_UNORM_BLOCK,        // SDL_GPU_TEXTUREFORMAT_ASTC_5x5_UNORM
-    VK_FORMAT_ASTC_6x5_UNORM_BLOCK,        // SDL_GPU_TEXTUREFORMAT_ASTC_6x5_UNORM
-    VK_FORMAT_ASTC_6x6_UNORM_BLOCK,        // SDL_GPU_TEXTUREFORMAT_ASTC_6x6_UNORM
-    VK_FORMAT_ASTC_8x5_UNORM_BLOCK,        // SDL_GPU_TEXTUREFORMAT_ASTC_8x5_UNORM
-    VK_FORMAT_ASTC_8x6_UNORM_BLOCK,        // SDL_GPU_TEXTUREFORMAT_ASTC_8x6_UNORM
-    VK_FORMAT_ASTC_8x8_UNORM_BLOCK,        // SDL_GPU_TEXTUREFORMAT_ASTC_8x8_UNORM
-    VK_FORMAT_ASTC_10x5_UNORM_BLOCK,       // SDL_GPU_TEXTUREFORMAT_ASTC_10x5_UNORM
-    VK_FORMAT_ASTC_10x6_UNORM_BLOCK,       // SDL_GPU_TEXTUREFORMAT_ASTC_10x6_UNORM
-    VK_FORMAT_ASTC_10x8_UNORM_BLOCK,       // SDL_GPU_TEXTUREFORMAT_ASTC_10x8_UNORM
-    VK_FORMAT_ASTC_10x10_UNORM_BLOCK,      // SDL_GPU_TEXTUREFORMAT_ASTC_10x10_UNORM
-    VK_FORMAT_ASTC_12x10_UNORM_BLOCK,      // SDL_GPU_TEXTUREFORMAT_ASTC_12x10_UNORM
-    VK_FORMAT_ASTC_12x12_UNORM_BLOCK,      // SDL_GPU_TEXTUREFORMAT_ASTC_12x12_UNORM
-    VK_FORMAT_ASTC_4x4_SRGB_BLOCK,         // SDL_GPU_TEXTUREFORMAT_ASTC_4x4_UNORM_SRGB
-    VK_FORMAT_ASTC_5x4_SRGB_BLOCK,         // SDL_GPU_TEXTUREFORMAT_ASTC_5x4_UNORM_SRGB
-    VK_FORMAT_ASTC_5x5_SRGB_BLOCK,         // SDL_GPU_TEXTUREFORMAT_ASTC_5x5_UNORM_SRGB
-    VK_FORMAT_ASTC_6x5_SRGB_BLOCK,         // SDL_GPU_TEXTUREFORMAT_ASTC_6x5_UNORM_SRGB
-    VK_FORMAT_ASTC_6x6_SRGB_BLOCK,         // SDL_GPU_TEXTUREFORMAT_ASTC_6x6_UNORM_SRGB
-    VK_FORMAT_ASTC_8x5_SRGB_BLOCK,         // SDL_GPU_TEXTUREFORMAT_ASTC_8x5_UNORM_SRGB
-    VK_FORMAT_ASTC_8x6_SRGB_BLOCK,         // SDL_GPU_TEXTUREFORMAT_ASTC_8x6_UNORM_SRGB
-    VK_FORMAT_ASTC_8x8_SRGB_BLOCK,         // SDL_GPU_TEXTUREFORMAT_ASTC_8x8_UNORM_SRGB
-    VK_FORMAT_ASTC_10x5_SRGB_BLOCK,        // SDL_GPU_TEXTUREFORMAT_ASTC_10x5_UNORM_SRGB
-    VK_FORMAT_ASTC_10x6_SRGB_BLOCK,        // SDL_GPU_TEXTUREFORMAT_ASTC_10x6_UNORM_SRGB
-    VK_FORMAT_ASTC_10x8_SRGB_BLOCK,        // SDL_GPU_TEXTUREFORMAT_ASTC_10x8_UNORM_SRGB
-    VK_FORMAT_ASTC_10x10_SRGB_BLOCK,       // SDL_GPU_TEXTUREFORMAT_ASTC_10x10_UNORM_SRGB
-    VK_FORMAT_ASTC_12x10_SRGB_BLOCK,       // SDL_GPU_TEXTUREFORMAT_ASTC_12x10_UNORM_SRGB
-    VK_FORMAT_ASTC_12x12_SRGB_BLOCK,       // SDL_GPU_TEXTUREFORMAT_ASTC_12x12_UNORM_SRGB
-    VK_FORMAT_ASTC_4x4_SFLOAT_BLOCK_EXT,   // SDL_GPU_TEXTUREFORMAT_ASTC_4x4_FLOAT
-    VK_FORMAT_ASTC_5x4_SFLOAT_BLOCK_EXT,   // SDL_GPU_TEXTUREFORMAT_ASTC_5x4_FLOAT
-    VK_FORMAT_ASTC_5x5_SFLOAT_BLOCK_EXT,   // SDL_GPU_TEXTUREFORMAT_ASTC_5x5_FLOAT
-    VK_FORMAT_ASTC_6x5_SFLOAT_BLOCK_EXT,   // SDL_GPU_TEXTUREFORMAT_ASTC_6x5_FLOAT
-    VK_FORMAT_ASTC_6x6_SFLOAT_BLOCK_EXT,   // SDL_GPU_TEXTUREFORMAT_ASTC_6x6_FLOAT
-    VK_FORMAT_ASTC_8x5_SFLOAT_BLOCK_EXT,   // SDL_GPU_TEXTUREFORMAT_ASTC_8x5_FLOAT
-    VK_FORMAT_ASTC_8x6_SFLOAT_BLOCK_EXT,   // SDL_GPU_TEXTUREFORMAT_ASTC_8x6_FLOAT
-    VK_FORMAT_ASTC_8x8_SFLOAT_BLOCK_EXT,   // SDL_GPU_TEXTUREFORMAT_ASTC_8x8_FLOAT
-    VK_FORMAT_ASTC_10x5_SFLOAT_BLOCK_EXT,  // SDL_GPU_TEXTUREFORMAT_ASTC_10x5_FLOAT
-    VK_FORMAT_ASTC_10x6_SFLOAT_BLOCK_EXT,  // SDL_GPU_TEXTUREFORMAT_ASTC_10x6_FLOAT
-    VK_FORMAT_ASTC_10x8_SFLOAT_BLOCK_EXT,  // SDL_GPU_TEXTUREFORMAT_ASTC_10x8_FLOAT
-    VK_FORMAT_ASTC_10x10_SFLOAT_BLOCK_EXT, // SDL_GPU_TEXTUREFORMAT_ASTC_10x10_FLOAT
-    VK_FORMAT_ASTC_12x10_SFLOAT_BLOCK_EXT, // SDL_GPU_TEXTUREFORMAT_ASTC_12x10_FLOAT
-    VK_FORMAT_ASTC_12x12_SFLOAT_BLOCK      // SDL_GPU_TEXTUREFORMAT_ASTC_12x12_FLOAT
+    VK_FORMAT_ASTC_4x4_UNORM_BLOCK,        // ASTC_4x4_UNORM
+    VK_FORMAT_ASTC_5x4_UNORM_BLOCK,        // ASTC_5x4_UNORM
+    VK_FORMAT_ASTC_5x5_UNORM_BLOCK,        // ASTC_5x5_UNORM
+    VK_FORMAT_ASTC_6x5_UNORM_BLOCK,        // ASTC_6x5_UNORM
+    VK_FORMAT_ASTC_6x6_UNORM_BLOCK,        // ASTC_6x6_UNORM
+    VK_FORMAT_ASTC_8x5_UNORM_BLOCK,        // ASTC_8x5_UNORM
+    VK_FORMAT_ASTC_8x6_UNORM_BLOCK,        // ASTC_8x6_UNORM
+    VK_FORMAT_ASTC_8x8_UNORM_BLOCK,        // ASTC_8x8_UNORM
+    VK_FORMAT_ASTC_10x5_UNORM_BLOCK,       // ASTC_10x5_UNORM
+    VK_FORMAT_ASTC_10x6_UNORM_BLOCK,       // ASTC_10x6_UNORM
+    VK_FORMAT_ASTC_10x8_UNORM_BLOCK,       // ASTC_10x8_UNORM
+    VK_FORMAT_ASTC_10x10_UNORM_BLOCK,      // ASTC_10x10_UNORM
+    VK_FORMAT_ASTC_12x10_UNORM_BLOCK,      // ASTC_12x10_UNORM
+    VK_FORMAT_ASTC_12x12_UNORM_BLOCK,      // ASTC_12x12_UNORM
+    VK_FORMAT_ASTC_4x4_SRGB_BLOCK,         // ASTC_4x4_UNORM_SRGB
+    VK_FORMAT_ASTC_5x4_SRGB_BLOCK,         // ASTC_5x4_UNORM_SRGB
+    VK_FORMAT_ASTC_5x5_SRGB_BLOCK,         // ASTC_5x5_UNORM_SRGB
+    VK_FORMAT_ASTC_6x5_SRGB_BLOCK,         // ASTC_6x5_UNORM_SRGB
+    VK_FORMAT_ASTC_6x6_SRGB_BLOCK,         // ASTC_6x6_UNORM_SRGB
+    VK_FORMAT_ASTC_8x5_SRGB_BLOCK,         // ASTC_8x5_UNORM_SRGB
+    VK_FORMAT_ASTC_8x6_SRGB_BLOCK,         // ASTC_8x6_UNORM_SRGB
+    VK_FORMAT_ASTC_8x8_SRGB_BLOCK,         // ASTC_8x8_UNORM_SRGB
+    VK_FORMAT_ASTC_10x5_SRGB_BLOCK,        // ASTC_10x5_UNORM_SRGB
+    VK_FORMAT_ASTC_10x6_SRGB_BLOCK,        // ASTC_10x6_UNORM_SRGB
+    VK_FORMAT_ASTC_10x8_SRGB_BLOCK,        // ASTC_10x8_UNORM_SRGB
+    VK_FORMAT_ASTC_10x10_SRGB_BLOCK,       // ASTC_10x10_UNORM_SRGB
+    VK_FORMAT_ASTC_12x10_SRGB_BLOCK,       // ASTC_12x10_UNORM_SRGB
+    VK_FORMAT_ASTC_12x12_SRGB_BLOCK,       // ASTC_12x12_UNORM_SRGB
+    VK_FORMAT_ASTC_4x4_SFLOAT_BLOCK_EXT,   // ASTC_4x4_FLOAT
+    VK_FORMAT_ASTC_5x4_SFLOAT_BLOCK_EXT,   // ASTC_5x4_FLOAT
+    VK_FORMAT_ASTC_5x5_SFLOAT_BLOCK_EXT,   // ASTC_5x5_FLOAT
+    VK_FORMAT_ASTC_6x5_SFLOAT_BLOCK_EXT,   // ASTC_6x5_FLOAT
+    VK_FORMAT_ASTC_6x6_SFLOAT_BLOCK_EXT,   // ASTC_6x6_FLOAT
+    VK_FORMAT_ASTC_8x5_SFLOAT_BLOCK_EXT,   // ASTC_8x5_FLOAT
+    VK_FORMAT_ASTC_8x6_SFLOAT_BLOCK_EXT,   // ASTC_8x6_FLOAT
+    VK_FORMAT_ASTC_8x8_SFLOAT_BLOCK_EXT,   // ASTC_8x8_FLOAT
+    VK_FORMAT_ASTC_10x5_SFLOAT_BLOCK_EXT,  // ASTC_10x5_FLOAT
+    VK_FORMAT_ASTC_10x6_SFLOAT_BLOCK_EXT,  // ASTC_10x6_FLOAT
+    VK_FORMAT_ASTC_10x8_SFLOAT_BLOCK_EXT,  // ASTC_10x8_FLOAT
+    VK_FORMAT_ASTC_10x10_SFLOAT_BLOCK_EXT, // ASTC_10x10_FLOAT
+    VK_FORMAT_ASTC_12x10_SFLOAT_BLOCK_EXT, // ASTC_12x10_FLOAT
+    VK_FORMAT_ASTC_12x12_SFLOAT_BLOCK      // ASTC_12x12_FLOAT
 };
 SDL_COMPILE_TIME_ASSERT(SDLToVK_TextureFormat, SDL_arraysize(SDLToVK_TextureFormat) == SDL_GPU_TEXTUREFORMAT_MAX_ENUM_VALUE);
 
@@ -714,6 +714,8 @@ typedef struct WindowData
     SDL_GPUSwapchainComposition swapchainComposition;
     SDL_GPUPresentMode presentMode;
     bool needsSwapchainRecreate;
+    Uint32 swapchainCreateWidth;
+    Uint32 swapchainCreateHeight;
 
     // Window surface
     VkSurfaceKHR surface;
@@ -4425,13 +4427,12 @@ static Uint32 VULKAN_INTERNAL_CreateSwapchain(
     VkSemaphoreCreateInfo semaphoreCreateInfo;
     SwapchainSupportDetails swapchainSupportDetails;
     bool hasValidSwapchainComposition, hasValidPresentMode;
-    Sint32 drawableWidth, drawableHeight;
     Uint32 i;
-    SDL_VideoDevice *_this = SDL_GetVideoDevice();
-
-    SDL_assert(_this && _this->Vulkan_CreateSurface);
 
     windowData->frameCounter = 0;
+
+    SDL_VideoDevice *_this = SDL_GetVideoDevice();
+    SDL_assert(_this && _this->Vulkan_CreateSurface);
 
     // Each swapchain must have its own surface.
     if (!_this->Vulkan_CreateSurface(
@@ -4535,16 +4536,20 @@ static Uint32 VULKAN_INTERNAL_CreateSwapchain(
         return VULKAN_INTERNAL_TRY_AGAIN;
     }
 
-    // Sync now to be sure that our swapchain size is correct
-    SDL_SyncWindow(windowData->window);
-    SDL_GetWindowSizeInPixels(
-        windowData->window,
-        &drawableWidth,
-        &drawableHeight);
-
     windowData->imageCount = MAX_FRAMES_IN_FLIGHT;
-    windowData->width = drawableWidth;
-    windowData->height = drawableHeight;
+
+#ifdef SDL_PLATFORM_APPLE
+    windowData->width = swapchainSupportDetails.capabilities.currentExtent.width;
+    windowData->height = swapchainSupportDetails.capabilities.currentExtent.height;
+#else
+    windowData->width = SDL_clamp(
+        windowData->swapchainCreateWidth,
+        swapchainSupportDetails.capabilities.minImageExtent.width,
+        swapchainSupportDetails.capabilities.maxImageExtent.width);
+    windowData->height = SDL_clamp(windowData->swapchainCreateHeight,
+        swapchainSupportDetails.capabilities.minImageExtent.height,
+        swapchainSupportDetails.capabilities.maxImageExtent.height);
+#endif
 
     if (swapchainSupportDetails.capabilities.maxImageCount > 0 &&
         windowData->imageCount > swapchainSupportDetails.capabilities.maxImageCount) {
@@ -4572,8 +4577,8 @@ static Uint32 VULKAN_INTERNAL_CreateSwapchain(
     swapchainCreateInfo.minImageCount = windowData->imageCount;
     swapchainCreateInfo.imageFormat = windowData->format;
     swapchainCreateInfo.imageColorSpace = windowData->colorSpace;
-    swapchainCreateInfo.imageExtent.width = drawableWidth;
-    swapchainCreateInfo.imageExtent.height = drawableHeight;
+    swapchainCreateInfo.imageExtent.width = windowData->width;
+    swapchainCreateInfo.imageExtent.height = windowData->height;
     swapchainCreateInfo.imageArrayLayers = 1;
     swapchainCreateInfo.imageUsage =
         VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT |
@@ -4647,8 +4652,8 @@ static Uint32 VULKAN_INTERNAL_CreateSwapchain(
         // Initialize dummy container
         SDL_zero(windowData->textureContainers[i]);
         windowData->textureContainers[i].canBeCycled = false;
-        windowData->textureContainers[i].header.info.width = drawableWidth;
-        windowData->textureContainers[i].header.info.height = drawableHeight;
+        windowData->textureContainers[i].header.info.width = windowData->width;
+        windowData->textureContainers[i].header.info.height = windowData->height;
         windowData->textureContainers[i].header.info.layer_count_or_depth = 1;
         windowData->textureContainers[i].header.info.format = SwapchainCompositionToSDLFormat(
             windowData->swapchainComposition,
@@ -8944,6 +8949,7 @@ static void VULKAN_Blit(
     // Using BeginRenderPass to clear because vkCmdClearColorImage requires barriers anyway
     if (info->load_op == SDL_GPU_LOADOP_CLEAR) {
         SDL_GPUColorTargetInfo targetInfo;
+        SDL_zero(targetInfo);
         targetInfo.texture = info->destination.texture;
         targetInfo.mip_level = info->destination.mip_level;
         targetInfo.layer_or_depth_plane = info->destination.layer_or_depth_plane;
@@ -9411,6 +9417,8 @@ static bool VULKAN_INTERNAL_OnWindowResize(void *userdata, SDL_Event *e)
     if (e->type == SDL_EVENT_WINDOW_PIXEL_SIZE_CHANGED && e->window.windowID == SDL_GetWindowID(w)) {
         data = VULKAN_INTERNAL_FetchWindowData(w);
         data->needsSwapchainRecreate = true;
+        data->swapchainCreateWidth = e->window.data1;
+        data->swapchainCreateHeight = e->window.data2;
     }
 
     return true;
@@ -9508,6 +9516,16 @@ static bool VULKAN_ClaimWindow(
         windowData->window = window;
         windowData->presentMode = SDL_GPU_PRESENTMODE_VSYNC;
         windowData->swapchainComposition = SDL_GPU_SWAPCHAINCOMPOSITION_SDR;
+
+        // On non-Apple platforms the swapchain capability currentExtent can be different from the window,
+        // so we have to query the window size.
+#ifndef SDL_PLATFORM_APPLE
+        int w, h;
+        SDL_SyncWindow(window);
+        SDL_GetWindowSizeInPixels(window, &w, &h);
+        windowData->swapchainCreateWidth = w;
+        windowData->swapchainCreateHeight = h;
+#endif
 
         Uint32 createSwapchainResult = VULKAN_INTERNAL_CreateSwapchain(renderer, windowData);
         if (createSwapchainResult == 1) {
