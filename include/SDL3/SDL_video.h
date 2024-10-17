@@ -1896,7 +1896,7 @@ extern SDL_DECLSPEC bool SDLCALL SDL_MaximizeWindow(SDL_Window *window);
  * Request that the window be minimized to an iconic representation.
  *
  * On some windowing systems this request is asynchronous and the new window
- * state may not have have been applied immediately upon the return of this
+ * state may not have been applied immediately upon the return of this
  * function. If an immediate change is required, call SDL_SyncWindow() to
  * block until the changes have taken effect.
  *
@@ -2459,12 +2459,14 @@ extern SDL_DECLSPEC bool SDLCALL SDL_SetWindowHitTest(SDL_Window *window, SDL_Hi
  *
  * This sets the alpha channel of a transparent window and any fully
  * transparent areas are also transparent to mouse clicks. If you are using
- * something besides the SDL render API, then you are responsible for setting
- * the alpha channel of the window yourself.
+ * something besides the SDL render API, then you are responsible for drawing
+ * the alpha channel of the window to match the shape alpha channel to get
+ * consistent cross-platform results.
  *
  * The shape is copied inside this function, so you can free it afterwards. If
  * your shape surface changes, you should call SDL_SetWindowShape() again to
- * update the window.
+ * update the window. This is an expensive operation, so should be done
+ * sparingly.
  *
  * The window must have been created with the SDL_WINDOW_TRANSPARENT flag.
  *
