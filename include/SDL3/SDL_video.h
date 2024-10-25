@@ -332,7 +332,7 @@ typedef SDL_EGLint *(SDLCALL *SDL_EGLIntArrayCallback)(void *userdata, SDL_EGLDi
  *
  * \since This enum is available since SDL 3.1.3.
  */
-typedef enum SDL_GLattr
+typedef enum SDL_GLAttr
 {
     SDL_GL_RED_SIZE,                    /**< the minimum number of bits for the red channel of the color buffer; defaults to 3. */
     SDL_GL_GREEN_SIZE,                  /**< the minimum number of bits for the green channel of the color buffer; defaults to 3. */
@@ -353,64 +353,64 @@ typedef enum SDL_GLattr
     SDL_GL_RETAINED_BACKING,            /**< not used (deprecated). */
     SDL_GL_CONTEXT_MAJOR_VERSION,       /**< OpenGL context major version. */
     SDL_GL_CONTEXT_MINOR_VERSION,       /**< OpenGL context minor version. */
-    SDL_GL_CONTEXT_FLAGS,               /**< some combination of 0 or more of elements of the SDL_GLcontextFlag enumeration; defaults to 0. */
-    SDL_GL_CONTEXT_PROFILE_MASK,        /**< type of GL context (Core, Compatibility, ES). See SDL_GLprofile; default value depends on platform. */
+    SDL_GL_CONTEXT_FLAGS,               /**< some combination of 0 or more of elements of the SDL_GLContextFlag enumeration; defaults to 0. */
+    SDL_GL_CONTEXT_PROFILE_MASK,        /**< type of GL context (Core, Compatibility, ES). See SDL_GLProfile; default value depends on platform. */
     SDL_GL_SHARE_WITH_CURRENT_CONTEXT,  /**< OpenGL context sharing; defaults to 0. */
     SDL_GL_FRAMEBUFFER_SRGB_CAPABLE,    /**< requests sRGB capable visual; defaults to 0. */
-    SDL_GL_CONTEXT_RELEASE_BEHAVIOR,    /**< sets context the release behavior. See SDL_GLcontextReleaseFlag; defaults to FLUSH. */
+    SDL_GL_CONTEXT_RELEASE_BEHAVIOR,    /**< sets context the release behavior. See SDL_GLContextReleaseFlag; defaults to FLUSH. */
     SDL_GL_CONTEXT_RESET_NOTIFICATION,  /**< set context reset notification. See SDL_GLContextResetNotification; defaults to NO_NOTIFICATION. */
     SDL_GL_CONTEXT_NO_ERROR,
     SDL_GL_FLOATBUFFERS,
     SDL_GL_EGL_PLATFORM
-} SDL_GLattr;
+} SDL_GLAttr;
 
 /**
  * Possible values to be set for the SDL_GL_CONTEXT_PROFILE_MASK attribute.
  *
- * \since This enum is available since SDL 3.1.3.
+ * \since This datatype is available since SDL 3.1.3.
  */
-typedef enum SDL_GLprofile
-{
-    SDL_GL_CONTEXT_PROFILE_CORE           = 0x0001,
-    SDL_GL_CONTEXT_PROFILE_COMPATIBILITY  = 0x0002,
-    SDL_GL_CONTEXT_PROFILE_ES             = 0x0004 /**< GLX_CONTEXT_ES2_PROFILE_BIT_EXT */
-} SDL_GLprofile;
+typedef Uint32 SDL_GLProfile;
+
+#define SDL_GL_CONTEXT_PROFILE_CORE           0x0001  /**< OpenGL Core Profile context */
+#define SDL_GL_CONTEXT_PROFILE_COMPATIBILITY  0x0002  /**< OpenGL Compatibility Profile context */
+#define SDL_GL_CONTEXT_PROFILE_ES             0x0004  /**< GLX_CONTEXT_ES2_PROFILE_BIT_EXT */
+
 
 /**
- * Possible values to be set for the SDL_GL_CONTEXT_FLAGS attribute.
+ * Possible flags to be set for the SDL_GL_CONTEXT_FLAGS attribute.
  *
- * \since This enum is available since SDL 3.1.3.
+ * \since This datatype is available since SDL 3.1.3.
  */
-typedef enum SDL_GLcontextFlag
-{
-    SDL_GL_CONTEXT_DEBUG_FLAG              = 0x0001,
-    SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG = 0x0002,
-    SDL_GL_CONTEXT_ROBUST_ACCESS_FLAG      = 0x0004,
-    SDL_GL_CONTEXT_RESET_ISOLATION_FLAG    = 0x0008
-} SDL_GLcontextFlag;
+typedef Uint32 SDL_GLContextFlag;
+
+#define SDL_GL_CONTEXT_DEBUG_FLAG              0x0001
+#define SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG 0x0002
+#define SDL_GL_CONTEXT_ROBUST_ACCESS_FLAG      0x0004
+#define SDL_GL_CONTEXT_RESET_ISOLATION_FLAG    0x0008
+
 
 /**
  * Possible values to be set for the SDL_GL_CONTEXT_RELEASE_BEHAVIOR
  * attribute.
  *
- * \since This enum is available since SDL 3.1.3.
+ * \since This datatype is available since SDL 3.1.3.
  */
-typedef enum SDL_GLcontextReleaseFlag
-{
-    SDL_GL_CONTEXT_RELEASE_BEHAVIOR_NONE   = 0x0000,
-    SDL_GL_CONTEXT_RELEASE_BEHAVIOR_FLUSH  = 0x0001
-} SDL_GLcontextReleaseFlag;
+typedef Uint32 SDL_GLContextReleaseFlag;
+
+#define SDL_GL_CONTEXT_RELEASE_BEHAVIOR_NONE   0x0000
+#define SDL_GL_CONTEXT_RELEASE_BEHAVIOR_FLUSH  0x0001
+
 
 /**
  * Possible values to be set SDL_GL_CONTEXT_RESET_NOTIFICATION attribute.
  *
- * \since This enum is available since SDL 3.1.3.
+ * \since This datatype is available since SDL 3.1.3.
  */
-typedef enum SDL_GLContextResetNotification
-{
-    SDL_GL_CONTEXT_RESET_NO_NOTIFICATION = 0x0000,
-    SDL_GL_CONTEXT_RESET_LOSE_CONTEXT    = 0x0001
-} SDL_GLContextResetNotification;
+typedef Uint32 SDL_GLContextResetNotification;
+
+#define SDL_GL_CONTEXT_RESET_NO_NOTIFICATION  0x0000
+#define SDL_GL_CONTEXT_RESET_LOSE_CONTEXT     0x0001
+
 
 /* Function prototypes */
 
@@ -2709,7 +2709,7 @@ extern SDL_DECLSPEC void SDLCALL SDL_GL_ResetAttributes(void);
  * SDL_GL_GetAttribute() to check the values after creating the OpenGL
  * context, since the values obtained can differ from the requested ones.
  *
- * \param attr an SDL_GLattr enum value specifying the OpenGL attribute to
+ * \param attr an SDL_GLAttr enum value specifying the OpenGL attribute to
  *             set.
  * \param value the desired value for the attribute.
  * \returns true on success or false on failure; call SDL_GetError() for more
@@ -2720,12 +2720,12 @@ extern SDL_DECLSPEC void SDLCALL SDL_GL_ResetAttributes(void);
  * \sa SDL_GL_GetAttribute
  * \sa SDL_GL_ResetAttributes
  */
-extern SDL_DECLSPEC bool SDLCALL SDL_GL_SetAttribute(SDL_GLattr attr, int value);
+extern SDL_DECLSPEC bool SDLCALL SDL_GL_SetAttribute(SDL_GLAttr attr, int value);
 
 /**
  * Get the actual value for an attribute from the current context.
  *
- * \param attr an SDL_GLattr enum value specifying the OpenGL attribute to
+ * \param attr an SDL_GLAttr enum value specifying the OpenGL attribute to
  *             get.
  * \param value a pointer filled in with the current value of `attr`.
  * \returns true on success or false on failure; call SDL_GetError() for more
@@ -2736,7 +2736,7 @@ extern SDL_DECLSPEC bool SDLCALL SDL_GL_SetAttribute(SDL_GLattr attr, int value)
  * \sa SDL_GL_ResetAttributes
  * \sa SDL_GL_SetAttribute
  */
-extern SDL_DECLSPEC bool SDLCALL SDL_GL_GetAttribute(SDL_GLattr attr, int *value);
+extern SDL_DECLSPEC bool SDLCALL SDL_GL_GetAttribute(SDL_GLAttr attr, int *value);
 
 /**
  * Create an OpenGL context for an OpenGL window, and make it current.
