@@ -800,7 +800,7 @@ static HRESULT D3D12_CreateDeviceResources(SDL_Renderer *renderer)
     ID3D12DescriptorHeap *rootDescriptorHeaps[2];
 
     // See if we need debug interfaces
-    createDebug = true;//SDL_GetHintBoolean(SDL_HINT_RENDER_DIRECT3D11_DEBUG, false);
+    createDebug = SDL_GetHintBoolean(SDL_HINT_RENDER_DIRECT3D11_DEBUG, false);
 
 #ifdef SDL_PLATFORM_GDK
     CreateEventExFunc = CreateEventExW;
@@ -1996,6 +1996,10 @@ static bool D3D12_UpdateTexture(SDL_Renderer *renderer, SDL_Texture *texture,
         }
     }
 #endif // SDL_HAVE_YUV
+    if (textureData->mainTextureResourceView.ptr == rendererData->currentShaderResource.ptr) {
+        // We'll need to rebind this resource after updating it
+        rendererData->currentShaderResource.ptr = 0;
+    }
     return true;
 }
 
@@ -2022,6 +2026,10 @@ static bool D3D12_UpdateTextureYUV(SDL_Renderer *renderer, SDL_Texture *texture,
     if (!D3D12_UpdateTextureInternal(rendererData, textureData->mainTextureV, 0, rect->x / 2, rect->y / 2, rect->w / 2, rect->h / 2, Vplane, Vpitch, &textureData->mainResourceStateV)) {
         return false;
     }
+    if (textureData->mainTextureResourceView.ptr == rendererData->currentShaderResource.ptr) {
+        // We'll need to rebind this resource after updating it
+        rendererData->currentShaderResource.ptr = 0;
+    }
     return true;
 }
 
@@ -2040,9 +2048,12 @@ static bool D3D12_UpdateTextureNV(SDL_Renderer *renderer, SDL_Texture *texture,
     if (!D3D12_UpdateTextureInternal(rendererData, textureData->mainTexture, 0, rect->x, rect->y, rect->w, rect->h, Yplane, Ypitch, &textureData->mainResourceState)) {
         return false;
     }
-
     if (!D3D12_UpdateTextureInternal(rendererData, textureData->mainTexture, 1, rect->x, rect->y, rect->w, rect->h, UVplane, UVpitch, &textureData->mainResourceState)) {
         return false;
+    }
+    if (textureData->mainTextureResourceView.ptr == rendererData->currentShaderResource.ptr) {
+        // We'll need to rebind this resource after updating it
+        rendererData->currentShaderResource.ptr = 0;
     }
     return true;
 }

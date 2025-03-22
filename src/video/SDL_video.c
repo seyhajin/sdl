@@ -2925,11 +2925,12 @@ bool SDL_GetWindowPosition(SDL_Window *window, int *x, int *y)
             }
         }
     } else {
+        const bool use_pending = (window->flags & SDL_WINDOW_HIDDEN) && window->last_position_pending;
         if (x) {
-            *x = window->x;
+            *x = use_pending ? window->pending.x : window->x;
         }
         if (y) {
-            *y = window->y;
+            *y = use_pending ? window->pending.y : window->y;
         }
     }
     return true;
@@ -3915,6 +3916,30 @@ bool SDL_FlashWindow(SDL_Window *window, SDL_FlashOperation operation)
 
     if (_this->FlashWindow) {
         return _this->FlashWindow(_this, window, operation);
+    }
+
+    return SDL_Unsupported();
+}
+
+bool SDL_SetWindowProgressState(SDL_Window *window, SDL_ProgressState state)
+{
+    CHECK_WINDOW_MAGIC(window, false);
+    CHECK_WINDOW_NOT_POPUP(window, false);
+
+    if (_this->SetWindowProgressState) {
+        return _this->SetWindowProgressState(_this, window, state);
+    }
+
+    return SDL_Unsupported();
+}
+
+bool SDL_SetWindowProgressValue(SDL_Window *window, float value)
+{
+    CHECK_WINDOW_MAGIC(window, false);
+    CHECK_WINDOW_NOT_POPUP(window, false);
+
+    if (_this->SetWindowProgressValue) {
+        return _this->SetWindowProgressValue(_this, window, value);
     }
 
     return SDL_Unsupported();
@@ -5415,6 +5440,10 @@ bool SDL_GetTextInputMultiline(SDL_PropertiesID props)
 static bool AutoShowingScreenKeyboard(void)
 {
     const char *hint = SDL_GetHint(SDL_HINT_ENABLE_SCREEN_KEYBOARD);
+    if (!hint) {
+        // Steam will eventually have smarts about whether a keyboard is active, so always request the on-screen keyboard on Steam Deck
+        hint = SDL_GetHint("SteamDeck");
+    }
     if (((!hint || SDL_strcasecmp(hint, "auto") == 0) && !SDL_HasKeyboard()) ||
         SDL_GetStringBoolean(hint, false)) {
         return true;
@@ -5719,23 +5748,7 @@ bool SDL_ShowMessageBox(const SDL_MessageBoxData *messageboxdata, int *buttonID)
 
 bool SDL_ShowSimpleMessageBox(SDL_MessageBoxFlags flags, const char *title, const char *message, SDL_Window *window)
 {
-#ifdef SDL_PLATFORM_EMSCRIPTEN
-    // !!! FIXME: propose a browser API for this, get this #ifdef out of here?
-    /* Web browsers don't (currently) have an API for a custom message box
-       that can block, but for the most common case (SDL_ShowSimpleMessageBox),
-       we can use the standard Javascript alert() function. */
-    if (!title) {
-        title = "";
-    }
-    if (!message) {
-        message = "";
-    }
-    EM_ASM({
-        alert(UTF8ToString($0) + "\n\n" + UTF8ToString($1));
-    },
-            title, message);
-    return true;
-#elif defined(SDL_PLATFORM_3DS)
+#if defined(SDL_PLATFORM_3DS)
     errorConf errCnf;
     bool hasGpuRight;
 

@@ -1106,6 +1106,7 @@ struct VulkanRenderer
 
     VulkanMemoryAllocator *memoryAllocator;
     VkPhysicalDeviceMemoryProperties memoryProperties;
+    bool checkEmptyAllocations;
 
     WindowData **claimedWindows;
     Uint32 claimedWindowCount;
@@ -1174,6 +1175,7 @@ struct VulkanRenderer
     SDL_Mutex *submitLock;
     SDL_Mutex *acquireCommandBufferLock;
     SDL_Mutex *acquireUniformBufferLock;
+    SDL_Mutex *renderPassFetchLock;
     SDL_Mutex *framebufferFetchLock;
     SDL_Mutex *windowLock;
 
@@ -1545,6 +1547,10 @@ static void VULKAN_INTERNAL_RemoveMemoryUsedRegion(
         usedRegion->allocation,
         usedRegion->offset,
         usedRegion->size);
+
+    if (usedRegion->allocation->usedRegionCount == 0) {
+        renderer->checkEmptyAllocations = true;
+    }
 
     SDL_free(usedRegion);
 
@@ -4424,6 +4430,7 @@ static Uint32 VULKAN_INTERNAL_CreateSwapchain(
     VkSemaphoreCreateInfo semaphoreCreateInfo;
     SwapchainSupportDetails swapchainSupportDetails;
     bool hasValidSwapchainComposition, hasValidPresentMode;
+    VkCompositeAlphaFlagsKHR compositeAlphaFlag = 0;
     Uint32 i;
 
     windowData->frameCounter = 0;
@@ -4564,6 +4571,25 @@ static Uint32 VULKAN_INTERNAL_CreateSwapchain(
         requestedImageCount = SDL_max(requestedImageCount, 3);
     }
 
+    // Default to opaque, if available, followed by inherit, and overwrite with a value that supports transparency, if necessary.
+    if (swapchainSupportDetails.capabilities.supportedCompositeAlpha & VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR) {
+        compositeAlphaFlag = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+    } else if (swapchainSupportDetails.capabilities.supportedCompositeAlpha & VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR) {
+        compositeAlphaFlag = VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR;
+    }
+
+    if ((windowData->window->flags & SDL_WINDOW_TRANSPARENT) || !compositeAlphaFlag) {
+        if (swapchainSupportDetails.capabilities.supportedCompositeAlpha & VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR) {
+            compositeAlphaFlag = VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR;
+        } else if (swapchainSupportDetails.capabilities.supportedCompositeAlpha & VK_COMPOSITE_ALPHA_POST_MULTIPLIED_BIT_KHR) {
+            compositeAlphaFlag = VK_COMPOSITE_ALPHA_POST_MULTIPLIED_BIT_KHR;
+        } else if (swapchainSupportDetails.capabilities.supportedCompositeAlpha & VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR) {
+            compositeAlphaFlag = VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR;
+        } else {
+            SDL_LogWarn(SDL_LOG_CATEGORY_GPU, "SDL_WINDOW_TRANSPARENT flag set, but no suitable swapchain composite alpha value supported!");
+        }
+    }
+
     swapchainCreateInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
     swapchainCreateInfo.pNext = NULL;
     swapchainCreateInfo.flags = 0;
@@ -4585,7 +4611,7 @@ static Uint32 VULKAN_INTERNAL_CreateSwapchain(
 #else
     swapchainCreateInfo.preTransform = swapchainSupportDetails.capabilities.currentTransform;
 #endif
-    swapchainCreateInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+    swapchainCreateInfo.compositeAlpha = compositeAlphaFlag;
     swapchainCreateInfo.presentMode = SDLToVK_PresentMode[windowData->presentMode];
     swapchainCreateInfo.clipped = VK_TRUE;
     swapchainCreateInfo.oldSwapchain = VK_NULL_HANDLE;
@@ -4730,7 +4756,7 @@ static Uint32 VULKAN_INTERNAL_CreateSwapchain(
             CHECK_VULKAN_ERROR_AND_RETURN(vulkanResult, vkCreateSemaphore, false);
         }
 
-        renderer->vkCreateSemaphore(
+        vulkanResult = renderer->vkCreateSemaphore(
             renderer->logicalDevice,
             &semaphoreCreateInfo,
             NULL,
@@ -4884,6 +4910,7 @@ static void VULKAN_DestroyDevice(
     SDL_DestroyMutex(renderer->submitLock);
     SDL_DestroyMutex(renderer->acquireCommandBufferLock);
     SDL_DestroyMutex(renderer->acquireUniformBufferLock);
+    SDL_DestroyMutex(renderer->renderPassFetchLock);
     SDL_DestroyMutex(renderer->framebufferFetchLock);
     SDL_DestroyMutex(renderer->windowLock);
 
@@ -7029,12 +7056,15 @@ static VkRenderPass VULKAN_INTERNAL_FetchRenderPass(
         key.depthStencilTargetDescription.stencilStoreOp = depthStencilTargetInfo->stencil_store_op;
     }
 
+    SDL_LockMutex(renderer->renderPassFetchLock);
+
     bool result = SDL_FindInHashTable(
         renderer->renderPassHashTable,
         (const void *)&key,
         (const void **)&renderPassWrapper);
 
     if (result) {
+        SDL_UnlockMutex(renderer->renderPassFetchLock);
         return renderPassWrapper->handle;
     }
 
@@ -7045,6 +7075,7 @@ static VkRenderPass VULKAN_INTERNAL_FetchRenderPass(
         depthStencilTargetInfo);
 
     if (renderPassHandle == VK_NULL_HANDLE) {
+        SDL_UnlockMutex(renderer->renderPassFetchLock);
         return VK_NULL_HANDLE;
     }
 
@@ -7059,6 +7090,8 @@ static VkRenderPass VULKAN_INTERNAL_FetchRenderPass(
         renderer->renderPassHashTable,
         (const void *)allocedKey,
         (const void *)renderPassWrapper, true);
+
+    SDL_UnlockMutex(renderer->renderPassFetchLock);
 
     return renderPassHandle;
 }
@@ -7128,9 +7161,8 @@ static VulkanFramebuffer *VULKAN_INTERNAL_FetchFramebuffer(
         (const void *)&key,
         (const void **)&vulkanFramebuffer);
 
-    SDL_UnlockMutex(renderer->framebufferFetchLock);
-
     if (findResult) {
+        SDL_UnlockMutex(renderer->framebufferFetchLock);
         return vulkanFramebuffer;
     }
 
@@ -7198,19 +7230,18 @@ static VulkanFramebuffer *VULKAN_INTERNAL_FetchFramebuffer(
         FramebufferHashTableKey *allocedKey = SDL_malloc(sizeof(FramebufferHashTableKey));
         SDL_memcpy(allocedKey, &key, sizeof(FramebufferHashTableKey));
 
-        SDL_LockMutex(renderer->framebufferFetchLock);
-
         SDL_InsertIntoHashTable(
             renderer->framebufferHashTable,
             (const void *)allocedKey,
             (const void *)vulkanFramebuffer, true);
 
-        SDL_UnlockMutex(renderer->framebufferFetchLock);
     } else {
         SDL_free(vulkanFramebuffer);
+        SDL_UnlockMutex(renderer->framebufferFetchLock);
         CHECK_VULKAN_ERROR_AND_RETURN(result, vkCreateFramebuffer, NULL);
     }
 
+    SDL_UnlockMutex(renderer->framebufferFetchLock);
     return vulkanFramebuffer;
 }
 
@@ -10375,7 +10406,6 @@ static bool VULKAN_Submit(
     VkPipelineStageFlags waitStages[MAX_PRESENT_COUNT];
     Uint32 swapchainImageIndex;
     VulkanTextureSubresource *swapchainTextureSubresource;
-    Uint8 commandBufferCleaned = 0;
     VulkanMemorySubAllocator *allocator;
     bool presenting = false;
 
@@ -10491,12 +10521,10 @@ static bool VULKAN_Submit(
                 renderer,
                 renderer->submittedCommandBuffers[i],
                 false);
-
-            commandBufferCleaned = 1;
         }
     }
 
-    if (commandBufferCleaned) {
+    if (renderer->checkEmptyAllocations) {
         SDL_LockMutex(renderer->allocatorLock);
 
         for (Uint32 i = 0; i < VK_MAX_MEMORY_TYPES; i += 1) {
@@ -10511,6 +10539,8 @@ static bool VULKAN_Submit(
                 }
             }
         }
+
+        renderer->checkEmptyAllocations = false;
 
         SDL_UnlockMutex(renderer->allocatorLock);
     }
@@ -11122,7 +11152,8 @@ static Uint8 VULKAN_INTERNAL_IsDeviceSuitable(
         !deviceFeatures.imageCubeArray ||
         !deviceFeatures.depthClamp ||
         !deviceFeatures.shaderClipDistance ||
-        !deviceFeatures.drawIndirectFirstInstance) {
+        !deviceFeatures.drawIndirectFirstInstance ||
+        !deviceFeatures.sampleRateShading) {
         return 0;
     }
 
@@ -11369,6 +11400,7 @@ static Uint8 VULKAN_INTERNAL_CreateLogicalDevice(
     desiredDeviceFeatures.depthClamp = VK_TRUE;
     desiredDeviceFeatures.shaderClipDistance = VK_TRUE;
     desiredDeviceFeatures.drawIndirectFirstInstance = VK_TRUE;
+    desiredDeviceFeatures.sampleRateShading = VK_TRUE;
 
     if (haveDeviceFeatures.fillModeNonSolid) {
         desiredDeviceFeatures.fillModeNonSolid = VK_TRUE;
@@ -11603,6 +11635,7 @@ static SDL_GPUDevice *VULKAN_CreateDevice(bool debugMode, bool preferLowPower, S
     renderer->submitLock = SDL_CreateMutex();
     renderer->acquireCommandBufferLock = SDL_CreateMutex();
     renderer->acquireUniformBufferLock = SDL_CreateMutex();
+    renderer->renderPassFetchLock = SDL_CreateMutex();
     renderer->framebufferFetchLock = SDL_CreateMutex();
     renderer->windowLock = SDL_CreateMutex();
 
@@ -11664,7 +11697,7 @@ static SDL_GPUDevice *VULKAN_CreateDevice(bool debugMode, bool preferLowPower, S
 
     renderer->renderPassHashTable = SDL_CreateHashTable(
         0,  // !!! FIXME: a real guess here, for a _minimum_ if not a maximum, could be useful.
-        true,  // thread-safe
+        false,  // manually synchronized due to timing
         VULKAN_INTERNAL_RenderPassHashFunction,
         VULKAN_INTERNAL_RenderPassHashKeyMatch,
         VULKAN_INTERNAL_RenderPassHashDestroy,
